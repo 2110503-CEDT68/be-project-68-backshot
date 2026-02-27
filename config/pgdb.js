@@ -1,28 +1,10 @@
-/*const { Pool } = require('pg');
-var connection = new Pool({
-    user: process.env.USER,
-    host: process.env.HOST,
-    database: process.env.DATABASE,
-    password: process.env.PASSWORD,
-    port: process.env.DB_PORT,
-});
-async function createAlbumsTable() {
-    try {
-        const query = `
-            CREATE TABLE IF NOT EXISTS albums (
-            id SERIAL PRIMARY KEY,
-            title VARCHAR(255) NOT NULL,
-            artist VARCHAR(255) NOT NULL,
-            price NUMERIC(10, 2)
-            );`;
-        await connection.query(query);
-        console.log('Albums table created');
-    } catch (err) {
-        console.error(err);
-        console.error('Albums table creation failed');
-    }
+const mongoose = require('mongoose');
+
+const connectDB = async () => {
+  mongoose.set('strictQuery', true);
+  const conn = await mongoose.connect(process.env.MONGO_URI);
+
+  console.log(`MongoDB connected: ${conn.connection.host}`)
 }
 
-createAlbumsTable();
-module.exports = connection;
-*/
+module.exports = connectDB;
