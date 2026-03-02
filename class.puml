@@ -3,6 +3,24 @@ left to right direction
 package "CampgroundBooking"{
     class "<<Application>>\nCampgroundBookingService" as CampgroundBookingService{}
 
+    class "<<Resource>>\nAuth" as ResourceAuth{
+        <<POST>> +register():User
+        <<POST>> +login():User
+        <<GET>> +getMe():User
+        <<GET>> +logout():void
+    }
+
+    class "<<Representation>>\nUser" as RepresentationUser {
+        -name
+        -email
+        -tel
+        -role
+        -password
+        -resetPasswordToken
+        -resetPasswordExpire
+        -createdAt
+    }
+
     class "<<Resource>>\nCampgrounds" as ResourceCampgrounds{
         <<GET>> +getCampgrounds():Campground
         <<POST>> +createCampground():Campground
@@ -23,6 +41,7 @@ package "CampgroundBooking"{
         -postalcode
         -tel
         -region
+        -createdAt
     }
 
     class "<<Resource>>\nBookings" as ResourceBookings{
@@ -45,6 +64,9 @@ package "CampgroundBooking"{
     }
 }
 
+CampgroundBookingService ..> ResourceAuth:"/auth\n<<Path>>"
+ResourceAuth ..> RepresentationUser: "<<use>>"
+
 CampgroundBookingService ..> ResourceCampgrounds:"/campgrounds\n<<Path>>"
 ResourceCampgrounds ..> ResourceCampground: "/{id}\n<<Path>>"
 ResourceCampground ..> RepresentationCampground: "<<use>>"
@@ -52,5 +74,8 @@ ResourceCampground ..> RepresentationCampground: "<<use>>"
 CampgroundBookingService ..> ResourceBookings:"/bookings\n<<Path>>"
 ResourceBookings ..> ResourceBooking: "/{id}\n<<Path>>"
 ResourceBooking ..> RepresentationBooking: "<<use>>"
+
+RepresentationUser "1" --> "*" RepresentationBooking: "has\n<<Reference>>"
+RepresentationCampground "1" --> "*" RepresentationBooking: "has\n<<Reference>>"
 
 @enduml
