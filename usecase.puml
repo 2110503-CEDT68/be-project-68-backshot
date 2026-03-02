@@ -1,0 +1,52 @@
+@startuml Campground System Use Case Diagram
+left to right direction
+
+actor "User" as user
+rectangle "Campground System" as CampSystem {
+    usecase "View\nCampground" as viewcamp
+
+    rectangle "Authentication" as auth {
+        usecase "Register" as register
+        usecase "Login" as login
+        usecase "Logout" as logout
+    }
+
+    rectangle "User" as users {
+        usecase "View\nMy Campground" as mycamp
+        usecase "Edit\nMy Campground" as editmycamp
+        usecase "Delete\nMy Campground" as deletemycamp
+        usecase "Create Booking\n(1-3 Nights)" as create
+    }
+    rectangle "Admin" as admins {
+        usecase "Edit\nAny Booking" as editbooking
+        usecase "Update\nAny Booking" as updatebooking
+        usecase "Delete\nAny Booking" as deletebooking
+        usecase "Delete\nCampground" as deletecamp
+        usecase "View\nAny Booking" as viewbook
+    }
+
+    
+}
+
+user -- register
+user -- login
+user -- viewcamp  
+
+actor "Authenticated User" as authuser
+authuser -- logout
+authuser -- create
+authuser -- viewcamp
+authuser -- mycamp
+authuser -- editmycamp
+authuser -- deletemycamp
+  
+actor "Admin" as admin
+register -- admin
+login -- admin
+logout -- admin
+editbooking -- admin
+updatebooking -- admin
+deletebooking -- admin
+deletecamp -- admin
+viewbook -- admin
+@enduml
