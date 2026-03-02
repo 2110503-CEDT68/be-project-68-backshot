@@ -114,6 +114,9 @@ exports.addBooking = async (req, res, next) => {
 
     req.body.user = req.user.id;
 
+    const numOfNights = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    req.body.totalPrice = numOfNights * campground.pricePerNight;
+
     const booking = await Booking.create(req.body);
 
     res.status(200).json({
@@ -149,7 +152,12 @@ exports.updateBooking = async (req, res, next) => {
       });
     }
 
-    if (req.body.bookDate || req.body.bookEndDate) {
+    if (req.user.role !== "admin") {
+      delete req.body.user; 
+      delete req.body.totalPrice;
+    }
+
+    if (req.body.bookDate || req.body.bookEndDate || req.body.campground) {
       const startDate = new Date(req.body.bookDate || booking.bookDate);
       const endDate = new Date(req.body.bookEndDate || booking.bookEndDate);
 
@@ -169,6 +177,19 @@ exports.updateBooking = async (req, res, next) => {
           message: "Booking duration cannot exceed 3 days",
         });
       }
+
+      const targetCampgroundId = req.body.campground || booking.campground;
+      const campgroundInfo = await Campground.findById(targetCampgroundId);
+
+      if (!campgroundInfo) {
+        return res.status(404).json({
+          success: false,
+          message: `No Campground with the id of ${targetCampgroundId}`,
+        });
+      }
+
+      const numOfNights = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      req.body.totalPrice = numOfNights * campgroundInfo.pricePerNight;
     }
 
     booking = await Booking.findByIdAndUpdate(req.params.id, req.body, {

@@ -37,6 +37,10 @@ const CampgroundSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a region"],
     },
+    pricePerNight: {
+      type: Number,
+      required: [true, "Please add price per night"],
+    },
     createdAt: {
       type: Date,
       default: Date.now,
