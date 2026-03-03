@@ -89,6 +89,7 @@ exports.getCampground = async (req, res, next) => {
 // @route    POST /api/v1/campgrounds
 // @access   Private
 exports.createCampground = async (req, res, next) => {
+  if (req.body.pricePerNight < 0) return res.status(400).json({ success: false, message: "Price per night must be a positive number" });
   const campground = await Campground.create(req.body);
   res.status(201).json({ success: true, data: campground });
 };
