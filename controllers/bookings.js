@@ -168,10 +168,9 @@ exports.updateBooking = async (req, res, next) => {
         });
       }
 
-      if (
-        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24) >
-        3
-      ) {
+      const numOfNights = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if ( numOfNights > 3 ) {
         return res.status(400).json({
           success: false,
           message: "Booking duration cannot exceed 3 days",
@@ -188,7 +187,6 @@ exports.updateBooking = async (req, res, next) => {
         });
       }
 
-      const numOfNights = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
       req.body.totalPrice = numOfNights * campgroundInfo.pricePerNight;
     }
 

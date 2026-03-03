@@ -87,7 +87,9 @@ participant "<<javaScript>>\n:server" as server
 participant "<<router>>\n:bookings" as routerBookings
 participant "<<middleware>>\n:auth" as middlewareAuth
 participant "<<controllers>>\n:bookings" as controllersBookings
+participant "<<model>>\n:Campground" as modelCampground
 participant "<<model>>\n:Booking" as modelBooking
+database "<<MongoDB>>\n:campgrounds" as CampgroundsDatabase
 database "<<MongoDB>>\n:bookings" as BookingsDatabase
 
 client->server ++:req.put('/api/v1/bookings/:id')
@@ -99,6 +101,13 @@ controllersBookings->modelBooking ++:findById(req.params.id)
 modelBooking ->BookingsDatabase ++: BookingSchema
 BookingsDatabase --> modelBooking --: booking
 controllersBookings <-- modelBooking --:booking
+
+opt req.body has bookDate, bookEndDate, or campground
+    controllersBookings->modelCampground ++:findById(targetCampgroundId)
+    modelCampground ->CampgroundsDatabase ++: CampgroundSchema
+    CampgroundsDatabase --> modelCampground --: campgroundInfo
+    controllersBookings <-- modelCampground --:campgroundInfo
+end
 
 controllersBookings->modelBooking ++:findByIdAndUpdate(req.params.id, req.body)
 modelBooking ->BookingsDatabase ++: BookingSchema
